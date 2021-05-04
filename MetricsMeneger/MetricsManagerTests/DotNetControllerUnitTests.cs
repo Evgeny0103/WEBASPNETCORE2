@@ -1,6 +1,8 @@
 ﻿using System;
 using MetricsMeneger.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit;
 
 namespace MetricsManagerTests
@@ -11,7 +13,9 @@ namespace MetricsManagerTests
 
         public DotNetControllerUnitTests()
         {
-            _controller = new DotNetMetricsController();
+            var loggerMock = new Mock<ILogger<DotNetMetricsController>>();
+
+            _controller = new DotNetMetricsController(loggerMock.Object);
         }
 
 
@@ -39,6 +43,7 @@ namespace MetricsManagerTests
             _ = Assert.IsAssignableFrom<IActionResult>(result);
         }
     }
+
 
 }
 

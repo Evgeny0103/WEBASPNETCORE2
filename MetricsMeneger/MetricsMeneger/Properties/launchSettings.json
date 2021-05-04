@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "AgentsModel",
+      "launchUrl": "api/agents/get_agents",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

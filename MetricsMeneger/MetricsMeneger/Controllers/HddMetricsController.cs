@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,19 @@ namespace MetricsMeneger.Controllers
     [ApiController]
     public class HddMetricsController : ControllerBase
     {
+        private readonly ILogger<HddMetricsController> _logger;
+
+        public HddMetricsController(ILogger<HddMetricsController> logger)
+        {
+            _logger = logger;
+            _logger.LogDebug(1, "NLog встроен в HddMetricsController");
+        }
+
         [HttpGet("agent/{agentId}/left")]
         public IActionResult GetMetricsFromAgent(
-    [FromRoute] int agentId)
+            [FromRoute] int agentId)
         {
+            _logger.LogInformation($"Агент: {agentId}");
             return Ok();
         }
 
@@ -22,6 +32,7 @@ namespace MetricsMeneger.Controllers
         [HttpGet("cluster/left")]
         public IActionResult GetMetricsFromAllCluster()
         {
+            _logger.LogInformation($"Запрос общих данных");
             return Ok();
         }
     }

@@ -1,5 +1,7 @@
 ﻿using MetricsMeneger.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,13 +9,15 @@ using Xunit;
 
 namespace MetricsManagerTests
 {
-   public class HddControllerUnitTests
+    public class HddControllerUnitTests
     {
         private readonly HddMetricsController _controller;
 
         public HddControllerUnitTests()
         {
-            _controller = new HddMetricsController();
+            var loggerMock = new Mock<ILogger<HddMetricsController>>();
+
+            _controller = new HddMetricsController(loggerMock.Object);
         }
 
 

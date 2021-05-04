@@ -1,5 +1,7 @@
 ﻿using MetricsMeneger.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,13 +9,15 @@ using Xunit;
 
 namespace MetricsManagerTests
 {
-   public class RamControllerUnitTests
+    public class RamControllerUnitTests
     {
         private readonly RamMetricsController _controller;
 
         public RamControllerUnitTests()
         {
-            _controller = new RamMetricsController();
+            var loggerMock = new Mock<ILogger<RamMetricsController>>();
+
+            _controller = new RamMetricsController(loggerMock.Object);
         }
 
 
@@ -36,4 +40,5 @@ namespace MetricsManagerTests
             _ = Assert.IsAssignableFrom<IActionResult>(result);
         }
     }
+
 }

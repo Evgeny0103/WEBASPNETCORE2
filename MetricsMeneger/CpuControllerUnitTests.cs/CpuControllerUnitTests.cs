@@ -1,6 +1,10 @@
 ﻿using MetricsAgent.Controllers;
+using MetricsAgent.DataAccessLayer;
+using MetricsAgent.Metrics;
 using MetricsMeneger;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,44 +12,51 @@ using Xunit;
 
 namespace MetricsAgentTests.cs
 {
-   public class CpuControllerUnitTests
+    public class CpuControllerUnitTests
     {
         private readonly CpuMetricsController _controller;
+        private readonly Mock<ICpuMetricsRepository> _repositoryMock;
+        private readonly Mock<ILogger<CpuMetricsController>> _loggerMock;
 
         public CpuControllerUnitTests()
         {
-            _controller = new CpuMetricsController();
+            _repositoryMock = new Mock<ICpuMetricsRepository>();
+            _loggerMock = new Mock<ILogger<CpuMetricsController>>();
+
+            _controller = new CpuMetricsController(_repositoryMock.Object, _loggerMock.Object);
+        }
+
+
+        [Fact]
+        public void Create_ShouldCall_Create_From_Repository()
+        {
+            
+            _repositoryMock.Setup(repository =>
+                repository.Create(It.IsAny<CpuMetric>())).Verifiable();
+
+            
+            var result = _controller.Create(new MetricsAgent.Requests.CpuMetricCreateRequest
+            {
+                Time = DateTimeOffset.Now,
+                Value = 50
+            });
+            
+            _repositoryMock.Verify(repository =>
+                repository.Create(It.IsAny<CpuMetric>()), Times.AtMostOnce());
         }
 
         [Fact]
-        public void GetMetrics_ReturnsOk()
+        public void GetByTimePeriod_ShouldCall_GetByTimePeriod_From_Repository()
         {
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
+            _repositoryMock.Setup(repository =>
+                repository.GetByTimePeriod(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+                .Returns(new List<CpuMetric>());
 
-            var result = _controller.GetMetrics(fromTime, toTime);
+            _controller.GetByTimePeriod(DateTimeOffset.Now, DateTimeOffset.Now);
 
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
-        }
+            _repositoryMock.Verify(repository =>
+                repository.GetByTimePeriod(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()), Times.AtMostOnce());
 
-
-        [Theory]
-        [InlineData(0, 100, Percentile.Median)]
-        [InlineData(0, 100, Percentile.P75)]
-        [InlineData(0, 100, Percentile.P90)]
-        [InlineData(0, 100, Percentile.P95)]
-        [InlineData(0, 100, Percentile.P99)]
-        public void GetMetricsByPercentile_ReturnsOk(
-            int start,
-            int end,
-            Percentile percentile)
-        {
-            var fromTime = TimeSpan.FromSeconds(start);
-            var toTime = TimeSpan.FromSeconds(end);
-
-            var result = _controller.GetMetricsByPercentile(fromTime, toTime, percentile);
-
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
         }
     }
 }

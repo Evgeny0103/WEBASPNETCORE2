@@ -1,6 +1,8 @@
 using MetricsMeneger.Controllers;
 using MetricsMeneger.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System;
 using Xunit;
 
@@ -13,8 +15,9 @@ namespace MetricsManagerTests
         public AgentsControllerUnitTests()
         {
             var agentsModel = new AgentsModel();
+            var loggerMock = new Mock<ILogger<AgentsController>>();
 
-            _controller = new AgentsController(agentsModel);
+            _controller = new AgentsController(agentsModel, loggerMock.Object);
         }
 
         [Fact]

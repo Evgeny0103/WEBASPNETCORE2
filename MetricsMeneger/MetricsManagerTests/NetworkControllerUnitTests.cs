@@ -1,5 +1,7 @@
 ﻿using MetricsMeneger.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,13 +9,15 @@ using Xunit;
 
 namespace MetricsManagerTests
 {
-   public class NetworkControllerUnitTests
+    public class NetworkControllerUnitTests
     {
         private readonly NetworkMetricsController _controller;
 
         public NetworkControllerUnitTests()
         {
-            _controller = new NetworkMetricsController();
+            var loggerMock = new Mock<ILogger<NetworkMetricsController>>();
+
+            _controller = new NetworkMetricsController(loggerMock.Object);
         }
 
 
@@ -41,4 +45,5 @@ namespace MetricsManagerTests
             _ = Assert.IsAssignableFrom<IActionResult>(result);
         }
     }
+    
 }

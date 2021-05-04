@@ -1,3 +1,4 @@
+using MetricsMeneger.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +27,7 @@ namespace MetricsMeneger
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddSingleton<AgentsModel>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
